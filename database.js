@@ -1,4 +1,5 @@
 const {createPool}=require('mysql');
+const mysql=require('mysql2');
 require('dotenv').config();
 
 // ENV VARIABLES
@@ -81,6 +82,15 @@ connect.query("CREATE TABLE IF NOT EXISTS cancels(id INT AUTO_INCREMENT,cancelID
     }
 })
 
+
+// CREATE OTP TABLE
+connect.query("CREATE TABLE IF NOT EXISTS setpassword(id INT AUTO_INCREMENT,otp VARCHAR(7) UNIQUE,email VARCHAR(100) UNIQUE NOT NULL,createdAt DATETIME NOT NULL,validTill DATETIME NOT NULL,PRIMARY KEY(id))",(err,res)=>{
+    if(err){
+        console.log(err);
+    }else{
+        console.log("Set password created");
+    }
+})
 
 // ADDED THE FOREIGN KEY OF CANCEL ID IN ORDERS TABLE
 // connect.query("ALTER TABLE orders ADD cancelID VARCHAR(10)",(err,res)=>{
