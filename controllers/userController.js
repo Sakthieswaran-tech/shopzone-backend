@@ -1,8 +1,9 @@
 const bcrypt = require('bcrypt');
+const transporter=require('../helpers/email-config');
+const {otpExist,deleteOtp,validateUser}=require('../helpers/dbOps/userQueries');
 const { userdb } = require('../helpers/connectDB/userDB');
 const { generateUserID,generateOtp } = require('../helpers/generators');
-const transporter=require('../helpers/email-config');
-const { REPL_MODE_STRICT } = require('repl');
+
 
 const addUsers = async (req, res) => {
     let db = await userdb();
@@ -35,13 +36,16 @@ const registerUser=async(req,res)=>{
     let db=await userdb();
     let email=req.body.email;
     const sql="SELECT COUNT(userID) AS userID from users WHERE email=?";
-    db.query(sql,[email],(err,resp)=>{
+    db.query(sql,[email],async(err,resp)=>{
         if(err){
             return res.status(500).json({message:err});
         }else{
             if(resp[0].userID>0){
                 return res.status(409).json({message:"User already exists"});
             }else{
+                if(otpExist(email)){
+                    await deleteOtp(email);
+                }
                 let otp=generateOtp();
                 var mailOptions={
                     from:"mail",
@@ -70,7 +74,30 @@ const registerUser=async(req,res)=>{
     })
 }
 
+const checkOtp=async(req,res)=>{
+    let db=await userdb();
+    const sql="SELECT * FROM setPassword WHERE email=? AND otp=?";
+    let data=req.body;
+    db.query(sql,[data.email,data.otp],async(err,resp)=>{
+        if(err){
+            return res.status(500).json({message:err});
+        }else if(resp.length==0){
+            return res.status(409).json({message:'Invalid OTP'});
+        }else{
+            let date=new Date();
+            let valid=resp[0].validTill-date;
+            let minutes = Math.floor((valid/1000)/60);
+            if(minutes<0){
+                return res.status(410).json({message:"Otp expired"});
+            }
+            validateUser(resp[0].id);
+            return res.status(200).json({message:'Valid email'});
+        }
+    })
+}
+
 module.exports = {
     addUsers,
-    registerUser
+    registerUser,
+    checkOtp
 }

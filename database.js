@@ -84,7 +84,7 @@ connect.query("CREATE TABLE IF NOT EXISTS cancels(id INT AUTO_INCREMENT,cancelID
 
 
 // CREATE OTP TABLE
-connect.query("CREATE TABLE IF NOT EXISTS setpassword(id INT AUTO_INCREMENT,otp VARCHAR(7) UNIQUE,email VARCHAR(100) UNIQUE NOT NULL,createdAt DATETIME NOT NULL,validTill DATETIME NOT NULL,PRIMARY KEY(id))",(err,res)=>{
+connect.query("CREATE TABLE IF NOT EXISTS setpassword(id INT AUTO_INCREMENT,otp VARCHAR(7) UNIQUE,email VARCHAR(100) UNIQUE NOT NULL,createdAt DATETIME NOT NULL,validTill DATETIME NOT NULL,emailValidated BOOLEAN DEFAULT FALSE,PRIMARY KEY(id))",(err,res)=>{
     if(err){
         console.log(err);
     }else{
