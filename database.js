@@ -35,6 +35,14 @@ connect.query("CREATE TABLE IF NOT EXISTS users(id INT AUTO_INCREMENT,userID VAR
     }
 });
 
+connect.query("ALTER TABLE users MODIFY COLUMN email VARCHAR(100) UNIQUE NOT NULL",(err,res)=>{
+    if(err){
+        console.log(err);
+    }else{
+        console.log("Modified");
+    }
+})
+
 // CREATE VENDORS TABLE
 connect.query("CREATE TABLE IF NOT EXISTS vendors(id INT AUTO_INCREMENT,userID VARCHAR(10) NOT NULL,vendorID VARCHAR(10) NOT NULL,storeName VARCHAR(20) NOT NULL,storeLocation VARCHAR(20) NOT NULL, PRIMARY KEY(id),FOREIGN KEY(userID) REFERENCES users(userID) ON DELETE CASCADE,UNIQUE(vendorID))",(err,res)=>{
     if(err){

@@ -1,14 +1,14 @@
 const express=require('express');
 
 const {
-    addUsers,
     registerUser,
-    checkOtp
+    checkOtp,
+    addUsers,
 }=require('../controllers/userController');
 
 const router=express.Router();
 
-router.route('/').post(registerUser);
+router.route('/otpgen').post(registerUser);
 router.route('/checkotp').post(checkOtp);
 router.route('/addUser').post(addUsers);
 

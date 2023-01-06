@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt=require('bcrypt');
 const transporter = require('../helpers/email-config');
 const { otpExist, deleteOtp, validateUser} = require('../helpers/dbOps/userQueries');
 const { userdb } = require('../helpers/connectDB/userDB');
@@ -99,7 +99,7 @@ const addUsers = async (req, res) => {
                             const sql = "INSERT INTO users(userID,username,email,phoneNumber,password,role,createdAt,lastLogin) VALUES(?,?,?,?,?,?,?,?)";
                             db.query(sql, [userID, data.username, data.email, data.phoneNumber, hash, data.role, date, date], (error, result, field) => {
                                 if (error) {
-                                    return res.status(500).json({ message: error });
+                                    return res.status(409).json({ message: error.sqlMessage });
                                 }
                                 return res.status(201).json({ message: "User added successfully" });
                             });
@@ -112,7 +112,7 @@ const addUsers = async (req, res) => {
 }
 
 module.exports = {
-    addUsers,
     registerUser,
-    checkOtp
+    checkOtp,
+    addUsers
 }
