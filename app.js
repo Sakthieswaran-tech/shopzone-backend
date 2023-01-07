@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const userRoutes=require('./routes/users');
 const vendorRoutes=require('./routes/vendors');
 const loginRoutes=require('./routes/login');
+const productRoutes=require('./routes/products');
 
 const app=express();
 const port=process.env.PORT;
@@ -20,6 +21,7 @@ app.use(morgan('dev'))
 app.use('/users',userRoutes);
 app.use('/vendors',vendorRoutes);
 app.use('/login',loginRoutes);
+app.use('/product',productRoutes);
 
 app.use((req,res,next)=>{
     const error=new Error("Not found page");
