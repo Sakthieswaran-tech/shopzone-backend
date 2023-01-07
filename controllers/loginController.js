@@ -1,7 +1,7 @@
 const jwt=require('jsonwebtoken');
 const bcrypt=require('bcrypt');
 require('dotenv').config();
-const {userdb}=require('../helpers/connectDB/userDB');
+const {userdb}=require('../helpers/connectDB/db');
 
 const SECRET_KEY=process.env.SECRET_KEY;
 

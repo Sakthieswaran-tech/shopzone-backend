@@ -7,6 +7,7 @@ const PASSWORD=process.env.PASSWORD;
 const DATABASE=process.env.DATABASE;
 
 let userConnect;
+let productConnect;
 const userConnection=()=>{
     if(!userConnect){
         userConnect=pool.createPool({
@@ -19,4 +20,17 @@ const userConnection=()=>{
     return userConnect;
 }
 
+const productConnection=()=>{
+    if(!productConnect){
+        userConnect=pool.createPool({
+            host:HOST,
+            user:USERNAME,
+            password:PASSWORD,
+            database:DATABASE
+        });
+    }
+    return productConnect;
+}
+
 module.exports.userdb=userConnection;
+module.exports.productdb=productConnection;

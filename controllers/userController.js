@@ -1,7 +1,7 @@
 const bcrypt=require('bcrypt');
 const transporter = require('../helpers/email-config');
 const { otpExist, deleteOtp, validateUser} = require('../helpers/dbOps/userQueries');
-const { userdb } = require('../helpers/connectDB/userDB');
+const { userdb } = require('../helpers/connectDB/db');
 const { generateUserID, generateOtp } = require('../helpers/generators');
 
 

@@ -1,4 +1,4 @@
-const { userdb } = require('../connectDB/userDB');
+const { userdb } = require('../connectDB/db');
 
 const otpExist=async(email)=>{
     let db=await userdb();

@@ -1,4 +1,4 @@
-const { userdb } = require('../helpers/connectDB/userDB');
+const { userdb } = require('../helpers/connectDB/db');
 const { generateUserID} = require('../helpers/generators');
 
 const addVendor=async(req,res)=>{

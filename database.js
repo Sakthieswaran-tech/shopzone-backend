@@ -100,6 +100,7 @@ connect.query("CREATE TABLE IF NOT EXISTS setpassword(id INT AUTO_INCREMENT,otp 
     }
 })
 
+
 // ADDED THE FOREIGN KEY OF CANCEL ID IN ORDERS TABLE
 // connect.query("ALTER TABLE orders ADD cancelID VARCHAR(10)",(err,res)=>{
 //     if(err){
