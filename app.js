@@ -16,6 +16,7 @@ const port=process.env.PORT;
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
+app.use(express.json());
 app.use(morgan('dev'))
 
 app.use('/users',userRoutes);

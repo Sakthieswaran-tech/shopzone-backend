@@ -22,7 +22,7 @@ const userConnection=()=>{
 
 const productConnection=()=>{
     if(!productConnect){
-        userConnect=pool.createPool({
+        productConnect=pool.createPool({
             host:HOST,
             user:USERNAME,
             password:PASSWORD,
