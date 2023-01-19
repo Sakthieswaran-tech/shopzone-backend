@@ -34,18 +34,52 @@ const addProduct = async (req, res) => {
             })
         }
     })
-    // console.log(req.file);
-    // console.log(req.body)
+}
+
+const addMoreImages=async(req,res)=>{
+    let db=await productdb();
+    let id=req.params.productID;
+    let column="productImage"+req.body.flag;
+    const sql=`UPDATE products SET ${column}=? WHERE productID=?`;
+    db.query(sql,[req.file.location,id],(err,result)=>{
+        if(err){
+            return res.status(500).json({error:err});
+        }else{
+            return res.status(201).json({message:"Image added"});
+        }
+    })
 }
 
 const getAllProducts = async (req, res) => {
-    console.log(req.data)
-    // let data=await s3.listObjectsV2().promise();
-    // let products=data.Contents.map(item=>item.Key);
-    // return res.status(200).json({ products: products });
+    let db=await productdb();
+    const sql="SELECT * FROM products";
+    db.query(sql,(err,result)=>{
+        if(err){
+            return res.status(500).json({error:err});
+        }else{
+            return res.status(200).json({products:result});
+        }
+    })
+}
+
+const getProduct=async(req,res)=>{
+    let db=await productdb();
+    let id=req.params.productID;
+    const sql="SELECT * from products WHERE productID=?";
+    db.query(sql,[id],(err,result)=>{
+        if(err){
+            return res.status(500).json({error:err});
+        }else if(result.length==0){
+            return res.status(404).json({message:"No product found"});
+        }else{
+            return res.status(200).json({product:result});
+        }
+    })
 }
 
 module.exports = {
     addProduct,
-    getAllProducts
+    getAllProducts,
+    getProduct,
+    addMoreImages
 }
