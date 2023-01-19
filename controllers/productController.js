@@ -1,7 +1,5 @@
 const { productdb } = require('../helpers/connectDB/db');
-const { generateUserID } = require('../helpers/generators');
-const { s3 } = require('../middleware/s3-config');
-const { upload } = require('../middleware/s3-config');
+const { generateID } = require('../helpers/generators');
 
 const addProduct = async (req, res) => {
     let db = await productdb();
@@ -12,7 +10,7 @@ const addProduct = async (req, res) => {
             console.log(err);
             return res.status(500).json({ message: err });
         } else {
-            const productID = result.length == 0 ? "PROD000001" : generateUserID(result[0].productID, "PROD");
+            const productID = result.length == 0 ? "PROD000001" : generateID(result[0].productID, "PROD");
             const userID = req.user.detais.userID;
             const sql = "SELECT vendorID from vendors WHERE userID=?";
             db.query(sql, [userID], (err, result) => {

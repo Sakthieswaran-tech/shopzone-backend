@@ -1,74 +1,71 @@
-const bcrypt=require('bcrypt');
+const bcrypt = require('bcrypt');
 const transporter = require('../helpers/email-config');
-const { otpExist, deleteOtp, validateUser} = require('../helpers/dbOps/userQueries');
 const { userdb } = require('../helpers/connectDB/db');
-const { generateUserID, generateOtp } = require('../helpers/generators');
+const { generateID, generateOtp } = require('../helpers/generators');
 
 
 // ENTER EMAIL TO RECEIVE OTP
 const registerUser = async (req, res) => {
-    let db = await userdb();
-    let email = req.body.email;
-    const sql = "SELECT COUNT(userID) AS userID from users WHERE email=?";
-    db.query(sql, [email], async (err, resp) => {
-        if (err) {
-            return res.status(500).json({ message: err });
+    try {
+        let db = await userdb();
+        let email = req.body.email;
+        const sql = "SELECT COUNT(userID) AS userID from users WHERE email=?";
+        const [count, _] = await db.query(sql, [email]);
+        if (count[0].userID > 0) {
+            return res.status(409).json({ message: "User already exists" });
         } else {
-            if (resp[0].userID > 0) {
-                return res.status(409).json({ message: "User already exists" });
-            } else {
-                if (otpExist(email)) {
-                    await deleteOtp(email);
-                }
-                let otp = generateOtp();
-                var mailOptions = {
-                    from: "mail",
-                    to: email,
-                    subject: "otp ",
-                    html: "<h3>OTP FOR account </h3>" + otp + "<br>" + "<h4>Expires in 15 minutes</h4>"
-                }
-                transporter.sendMail(mailOptions, (err, info) => {
-                    if (err) {
-                        return res.status(500).json({ message: err });
-                    } else {
-                        const date = new Date();
-                        let endDate = new Date(new Date().getTime() + 15 * 60000);
-                        const insertOtp = "INSERT INTO setpassword(otp,email,createdAt,validTill) VALUES(?,?,?,?)"
-                        db.query(insertOtp, [otp, email, date, endDate], (error, result, field) => {
-                            if (error) {
-                                return res.status(500).json({ message: error });
-                            } else {
-                                return res.status(200).json({ detail: 'emai sent to ' + email, info })
-                            }
-                        })
-                    }
-                })
+            const [count,_]=await db.query("SELECT COUNT(email) AS email FROM setPassword WHERE email=?",[email]);
+            if(count[0].email>0){
+                await db.query("DELETE FROM setPassword WHERE email=?",[email]);
             }
+            let otp = generateOtp();
+            var mailOptions = {
+                from: "mail",
+                to: email,
+                subject: "otp ",
+                html: "<h3>OTP FOR account </h3>" + otp + "<br>" + "<h4>Expires in 15 minutes</h4>"
+            }
+            transporter.sendMail(mailOptions, async (err, info) => {
+                if (err) {
+                    return res.status(500).json({ message: err });
+                } else {
+                    const date = new Date();
+                    let endDate = new Date(new Date().getTime() + 15 * 60000);
+                    const insertOtp = "INSERT INTO setpassword(otp,email,createdAt,validTill) VALUES(?,?,?,?)"
+                    await db.query(insertOtp, [otp, email, date, endDate])
+                    return res.status(200).json({ detail: 'email sent to ' + email, info })
+                }
+            })
         }
-    })
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
 }
 
 // ENTER OTP TO VALIDATE EMAIL
 const checkOtp = async (req, res) => {
-    let db = await userdb();
-    const sql = "SELECT * FROM setPassword WHERE email=? AND otp=?";
-    let data = req.body;
-    db.query(sql, [data.email, data.otp], async (err, resp) => {
-        if (err) {
-            return res.status(500).json({ message: err });
-        } else if (resp.length == 0) {
+    try{
+        let db = await userdb();
+        const sql = "SELECT * FROM setPassword WHERE email=? AND otp=?";
+        let data = req.body;
+        const [result,_]=await db.query(sql, [data.email, data.otp])
+        if (result.length == 0) {
             return res.status(409).json({ message: 'Invalid OTP' });
         } else {
             let date = new Date();
-            let valid = resp[0].validTill - date;
+            let valid = result[0].validTill - date;
             let minutes = Math.floor((valid / 1000) / 60);
             if (minutes < 0) {
                 return res.status(410).json({ message: "Otp expired" });
             }
-            validateUser(resp[0].id);
+            const sql="UPDATE setPassword SET emailValidated=? WHERE id=?";
+            await db.query(sql,[true,result[0].id]);
             return res.status(200).json({ message: 'Email validated' });
         }
-    })
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({error});
+    }
 }
 
 // ADD USERS WHOSE EMAIL IS VALIDATED
@@ -94,7 +91,7 @@ const addUsers = async (req, res) => {
                         if (e) {
                             return res.status(500).json({ message: e });
                         } else {
-                            let userID = generateUserID(r[0].userID, "USER");
+                            let userID = generateID(r[0].userID, "USER");
                             const date = new Date();
                             const sql = "INSERT INTO users(userID,username,email,phoneNumber,password,role,createdAt,lastLogin) VALUES(?,?,?,?,?,?,?,?)";
                             db.query(sql, [userID, data.username, data.email, data.phoneNumber, hash, data.role, date, date], (error, result, field) => {

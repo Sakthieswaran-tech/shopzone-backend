@@ -1,4 +1,4 @@
-const sql=require('mysql2')
+const sql=require('mysql2/promise');
 const pool=require('mysql');
 
 const USERNAME=process.env.USERNAME;
@@ -8,9 +8,10 @@ const DATABASE=process.env.DATABASE;
 
 let userConnect;
 let productConnect;
-const userConnection=()=>{
+let orderConnect;
+const userConnection=async()=>{
     if(!userConnect){
-        userConnect=pool.createPool({
+        userConnect=await sql.createConnection({
             host:HOST,
             user:USERNAME,
             password:PASSWORD,
@@ -32,5 +33,18 @@ const productConnection=()=>{
     return productConnect;
 }
 
+const orderConnection=()=>{
+    if(!orderConnect){
+        orderConnect=sql.createConnection({
+            host:HOST,
+            user:USERNAME,
+            password:PASSWORD,
+            database:DATABASE
+        });
+    }
+    return orderConnect;
+}
+
 module.exports.userdb=userConnection;
 module.exports.productdb=productConnection;
+module.exports.orderdb=orderConnection;

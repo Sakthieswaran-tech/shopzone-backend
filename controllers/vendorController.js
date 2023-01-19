@@ -1,5 +1,5 @@
 const { userdb } = require('../helpers/connectDB/db');
-const { generateUserID} = require('../helpers/generators');
+const { generateID} = require('../helpers/generators');
 
 const addVendor=async(req,res)=>{
     let db=await userdb();
@@ -10,7 +10,7 @@ const addVendor=async(req,res)=>{
             console.log(err);
             return res.status(500).json({message:err});
         }else{
-            const vendorID=result.length==0?"VEND000001":generateUserID(result[0].vendorID,"VEND");
+            const vendorID=result.length==0?"VEND000001":generateID(result[0].vendorID,"VEND");
             const sql="SELECT * FROM users WHERE email=?";
             db.query(sql,[data.email],(err,result)=>{
                 if(err){

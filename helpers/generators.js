@@ -1,4 +1,4 @@
-const generateUserID=(userID,prefix)=>{
+const generateID=(userID,prefix)=>{
     let id=parseInt(userID.substring(4))+1;
     id.toString();
     while(prefix.length+id.toString().length<10){
@@ -14,6 +14,6 @@ const generateOtp=()=>{
 }
 
 module.exports={
-    generateUserID,
+    generateID,
     generateOtp
 };

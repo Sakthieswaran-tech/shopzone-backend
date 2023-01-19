@@ -62,7 +62,7 @@ connect.query("CREATE TABLE IF NOT EXISTS products(id INT AUTO_INCREMENT,product
 });
 
 // CREATE ORDERS TABLE
-connect.query("CREATE TABLE IF NOT EXISTS orders(id INT AUTO_INCREMENT,orderID VARCHAR(10) NOT NULL,orderedBy VARCHAR(10) NOT NULL,vendor VARCHAR(10) NOT NULL,productID VARCHAR(10) NOT NULL,orderedOn DATETIME NOT NULL,orderStatus VARCHAR(10) NOT NULL,orderCancelled BOOLEAN DEFAULT FALSE,cancelReason VARCHAR(100) NOT NULL DEFAULT 'NOT CANCELLED',FOREIGN KEY(productID) REFERENCES products(productID) ON DELETE CASCADE,FOREIGN KEY(orderedBy) REFERENCES users(userID) ON DELETE CASCADE,FOREIGN KEY(vendor) REFERENCES vendors(vendorID) ON DELETE CASCADE,PRIMARY KEY(id),UNIQUE(orderID))",(err,res)=>{
+connect.query("CREATE TABLE IF NOT EXISTS orders(id INT AUTO_INCREMENT,orderID VARCHAR(10) NOT NULL,orderedBy VARCHAR(10) NOT NULL,vendor VARCHAR(10) NOT NULL,productID VARCHAR(10) NOT NULL,orderedOn DATETIME NOT NULL,orderStatus VARCHAR(10) NOT NULL,orderCancelled BOOLEAN DEFAULT FALSE,cancelReason VARCHAR(100) NOT NULL DEFAULT 'NOT CANCELLED',FOREIGN KEY(productID) REFERENCES products(productID) ON DELETE CASCADE,FOREIGN KEY(orderedBy) REFERENCES users(userID) ON DELETE CASCADE,FOREIGN KEY(vendor) REFERENCES vendors(vendorID) ON DELETE CASCADE,PRIMARY KEY(id))",(err,res)=>{
     if(err){
         console.log(err);
     }else{
@@ -82,13 +82,13 @@ connect.query("CREATE TABLE IF NOT EXISTS reviews(id INT AUTO_INCREMENT,reviewID
 
 
 // CREATE CANCEL TABLE
-connect.query("CREATE TABLE IF NOT EXISTS cancels(id INT AUTO_INCREMENT,cancelID VARCHAR(10),orderID VARCHAR(10),status VARCHAR(10),PRIMARY KEY(id),FOREIGN KEY(orderID) REFERENCES orders(orderID) ON DELETE CASCADE,UNIQUE(cancelID))",(err,res)=>{
-    if(err){
-        console.log(err);
-    }else{
-        console.log("Cancel table created");
-    }
-})
+// connect.query("CREATE TABLE IF NOT EXISTS cancels(id INT AUTO_INCREMENT,cancelID VARCHAR(10),orderID VARCHAR(10),status VARCHAR(10),PRIMARY KEY(id),FOREIGN KEY(orderID) REFERENCES orders(orderID) ON DELETE CASCADE,UNIQUE(cancelID))",(err,res)=>{
+//     if(err){
+//         console.log(err);
+//     }else{
+//         console.log("Cancel table created");
+//     }
+// })
 
 
 // CREATE OTP TABLE
@@ -117,10 +117,10 @@ connect.query("CREATE TABLE IF NOT EXISTS setpassword(id INT AUTO_INCREMENT,otp 
 // })
 
 
-connect.query("ALTER TABLE products ADD productName VARCHAR(30) NOT NULL",(err,res)=>{
+connect.query("ALTER TABLE orders ADD quantity INT NOT NULL",(err,res)=>{
     if(err){
         console.log(err);
     }else{
-        console.log("Name added");
+        console.log("Q added");
     }
 })
