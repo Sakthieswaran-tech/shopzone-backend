@@ -8,6 +8,21 @@ const addOrders=async(data,orderID,userID,res)=>{
     }
 }
 
+const changeProducts=async(orders)=>{
+    let db=await orderdb();
+    for(let i in orders){
+        let productID=orders[i].productID;
+        let quantity=orders[i].quantity;
+        let [product,_]=await db.query("SELECT * FROM products WHERE productID=?",[productID]);
+        let sold=product[0].soldQuantity;
+        let total=product[0].quantity;
+        sold=sold+quantity;
+        total=total-quantity;
+        await db.query("UPDATE products SET quantity=?,soldQuantity=? WHERE productID=?",[total,sold,productID]);
+    }
+}
+
 module.exports={
-    addOrders
+    addOrders,
+    changeProducts
 }

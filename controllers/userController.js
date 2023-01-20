@@ -63,7 +63,6 @@ const checkOtp = async (req, res) => {
             return res.status(200).json({ message: 'Email validated' });
         }
     }catch(error){
-        console.log(error);
         return res.status(500).json({error});
     }
 }
@@ -79,7 +78,6 @@ const addUsers = async (req, res) => {
             const sql1 = "SELECT * FROM setPassword WHERE email=?";
             db.query(sql1, [data.email], (err, result) => {
                 if (err) {
-                    console.log(err);
                     return res.status(500).json({ message: err })
                 } else if (result.length == 0) {
                     return res.status(404).json({ message: "user did not register email" });

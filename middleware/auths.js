@@ -14,7 +14,7 @@ const checkToken=(req,res,next)=>{
 }
 
 const checkRole=(req,res,next)=>{
-    if(req.user.detais.role!=='vendor'){
+    if(req.user.detail.role!=='vendor'){
         return res.status(401).json({message:"Only vendors can add products"});
     }
     next();
